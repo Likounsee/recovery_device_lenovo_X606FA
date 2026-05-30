@@ -1,6 +1,7 @@
 name: TWRP Build X606F
 
 on:
+  push:
   workflow_dispatch:
 
 jobs:

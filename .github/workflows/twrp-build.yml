@@ -1,0 +1,35 @@
+name: TWRP Build X606F
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y git-core gnupg flex bison build-essential zip curl \
+          zlib1g-dev libc6-dev-i386 libncurses6 lib32ncurses6 libx11-dev \
+          libgl1-mesa-dev xsltproc unzip python3
+
+      - name: Clone repo
+        run: |
+          git clone https://github.com/${{ github.repository }}.git twrp
+          cd twrp
+          ls
+
+      - name: Build TWRP
+        run: |
+          cd twrp
+          . build/envsetup.sh
+          lunch twrp_X606F-eng || lunch twrp_X606FA-eng
+          mka recoveryimage
+
+      - name: Upload recovery
+        uses: actions/upload-artifact@v4
+        with:
+          name: recovery-img
+          path: twrp/out/target/product/*/recovery.img
